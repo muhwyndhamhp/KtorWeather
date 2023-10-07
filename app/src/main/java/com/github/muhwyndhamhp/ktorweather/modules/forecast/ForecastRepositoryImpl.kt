@@ -1,7 +1,7 @@
 package com.github.muhwyndhamhp.ktorweather.modules.forecast
 
 import com.github.muhwyndhamhp.ktorweather.datasource.KtorWeatherDB
-import com.github.muhwyndhamhp.ktorweather.datasource.OpenMeteoService
+import com.github.muhwyndhamhp.ktorweather.datasource.OpenMeteoServicePipe
 import com.github.muhwyndhamhp.ktorweather.dtos.WeatherData
 import com.github.muhwyndhamhp.ktorweather.dtos.WeatherDataEntity
 import kotlinx.coroutines.FlowPreview
@@ -13,17 +13,17 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-class ForecastRepositoryImpl(private val service: OpenMeteoService, private val db: KtorWeatherDB) : ForecastRepository, KoinComponent {
+class ForecastRepositoryImpl(private val service: OpenMeteoServicePipe, private val db: KtorWeatherDB) : ForecastRepository, KoinComponent {
     @OptIn(FlowPreview::class)
     override suspend fun getLatestForecastData(lat: Double, lng: Double): Flow<Result<WeatherData>> {
         val dbFlow = db.weatherDao().getLastWeatherData()
-        val networkFlow = service.GetForecast(lat, lng)
+        val networkFlow = service.getForecast(lat, lng)
 
         return dbFlow.flatMapConcat { dbData ->
             if (dbData == null) {
                 collectNetworkToDB(networkFlow)
             } else {
-                val format = SimpleDateFormat("yyyy-MM-ddTHH:mm", java.util.Locale.ENGLISH)
+                val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", java.util.Locale.getDefault())
                 val lastWeatherTime = format.parse(dbData.currentWeather?.time ?: "")
                 val now = Calendar.getInstance().time
 
@@ -37,7 +37,7 @@ class ForecastRepositoryImpl(private val service: OpenMeteoService, private val 
                 hourlyUnits = dbData.hourlyUnits,
                 hourly = dbData.hourly,
             )
-            flowOf(Result.success(data ?: return@flatMapConcat flowOf(Result.failure(Exception("")))))
+            flowOf(Result.success(data ?: return@flatMapConcat flowOf(Result.failure(Exception("Data Empty")))))
         }
     }
 

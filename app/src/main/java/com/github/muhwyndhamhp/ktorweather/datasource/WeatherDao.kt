@@ -16,25 +16,27 @@ import kotlinx.coroutines.flow.Flow
 abstract class WeatherDao {
     @Transaction
     @Query("SELECT * FROM WeatherData ORDER BY id DESC LIMIT 1")
-    abstract suspend fun getLastWeatherData(): Flow<WeatherDataEntity?>
+    abstract fun getLastWeatherData(): Flow<WeatherDataEntity?>
+
+    @Query("SELECT * FROM WeatherData ORDER BY id DESC LIMIT 1")
+    abstract suspend fun getLatest(): WeatherData?
 
     @Insert
-    abstract suspend fun insertWeatherData(data: WeatherData): Long
+    abstract fun insertWeatherData(data: WeatherData): Long
 
     @Insert
-    abstract suspend fun insertWeatherUnit(data: WeatherUnit): Long
+    abstract fun insertWeatherUnit(data: WeatherUnit): Long
 
     @Insert
-    abstract suspend fun insertWeather(data: Weather): Long
+    abstract fun insertWeather(data: Weather): Long
 
     @Insert
-    abstract suspend fun insertWeatherHourlyUnits(data: WeatherHourlyUnits): Long
+    abstract fun insertWeatherHourlyUnits(data: WeatherHourlyUnits): Long
 
     @Insert
-    abstract suspend fun insertHourlyData(data: HourlyData): Long
+    abstract fun insertHourlyData(data: HourlyData): Long
 
-    @Transaction
-    suspend fun insertWeatherDataEntity(data: WeatherDataEntity) {
+    fun insertWeatherDataEntity(data: WeatherDataEntity) {
         val weatherDataID = insertWeatherData(data.weatherData ?: return)
 
         data.weatherUnit?.weatherDataID = weatherDataID

@@ -35,7 +35,7 @@ data class WeatherDataEntity(
 
 @Entity
 data class WeatherData(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Long?,
     @field:Json(name = "latitude")
     val lat: Double?,
@@ -61,10 +61,34 @@ data class WeatherData(
     @Ignore
     @field:Json(name = "hourly")
     val hourly: HourlyData?,
-)
+) {
+    constructor(
+        id: Long?,
+        lat: Double?,
+        lng: Double?,
+        timeZone: String?,
+        timeZoneAbbr: String?,
+        elevation: Int?,
+        weatherIntSeconds: Long?,
+    ) : this(
+        0,
+        0.0,
+        0.0,
+        "",
+        "",
+        0,
+        null,
+        0,
+        null,
+        null,
+        null
+    )
+}
 
 @Entity
 data class WeatherHourlyUnits(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long?,
     @field:Json(name = "relativehumidity_2m")
     val relativeHumidity: String?,
     @field:Json(name = "temperature_2m")
@@ -82,6 +106,8 @@ data class WeatherHourlyUnits(
 
 @Entity
 data class HourlyData(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long?,
     @field:Json(name = "relativehumidity_2m")
     val relativeHumidity: List<Int?>?,
     @field:Json(name = "temperature_2m")

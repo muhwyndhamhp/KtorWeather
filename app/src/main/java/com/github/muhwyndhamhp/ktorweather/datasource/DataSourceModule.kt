@@ -2,6 +2,8 @@ package com.github.muhwyndhamhp.ktorweather.datasource
 
 import android.content.Context
 import androidx.room.Room
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -10,15 +12,20 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 val dataSourceModule = module {
     factory { provideOpenMeteoService(get()) }
     single { provideOkHTTPClient() }
-    single { provideRetrofit(get(), "https://api.open-meteo.com/") }
+    single { provideRetrofit(get(), "https://api.open-meteo.com/".toHttpUrlOrNull()!!) }
     single {
         synchronized(this) {
             provideKtorWeatherDB(get())
         }
     }
+    single { provideOpenMeteoServicePipe(get()) }
 }
 
-fun provideRetrofit(okHttpClient: OkHttpClient, baseUrl: String): Retrofit {
+fun provideOpenMeteoServicePipe(service: OpenMeteoService): OpenMeteoServicePipe {
+    return OpenMeteoServicePipeImpl(service)
+}
+
+fun provideRetrofit(okHttpClient: OkHttpClient, baseUrl: HttpUrl): Retrofit {
     return Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(okHttpClient)

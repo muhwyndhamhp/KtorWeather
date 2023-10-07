@@ -1,7 +1,7 @@
 package com.github.muhwyndhamhp.ktorweather.modules.forecast
 
 import com.github.muhwyndhamhp.ktorweather.datasource.KtorWeatherDB
-import com.github.muhwyndhamhp.ktorweather.datasource.OpenMeteoService
+import com.github.muhwyndhamhp.ktorweather.datasource.OpenMeteoServicePipe
 import org.koin.dsl.module
 
 
@@ -10,7 +10,7 @@ val forecastModule = module {
     factory { provideForecastUsecase(get()) }
 }
 
-fun provideForecastRepo(service: OpenMeteoService, db: KtorWeatherDB): ForecastRepository {
+fun provideForecastRepo(service: OpenMeteoServicePipe, db: KtorWeatherDB): ForecastRepository {
     return ForecastRepositoryImpl(service, db)
 }
 
