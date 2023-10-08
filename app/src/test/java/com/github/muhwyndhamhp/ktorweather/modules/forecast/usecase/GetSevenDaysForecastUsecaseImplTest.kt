@@ -1,4 +1,4 @@
-package com.github.muhwyndhamhp.ktorweather.modules.forecast
+package com.github.muhwyndhamhp.ktorweather.modules.forecast.usecase
 
 import com.github.muhwyndhamhp.ktorweather.dtos.HourlyData
 import com.github.muhwyndhamhp.ktorweather.dtos.Weather
@@ -7,7 +7,7 @@ import com.github.muhwyndhamhp.ktorweather.dtos.WeatherHourlyUnits
 import com.github.muhwyndhamhp.ktorweather.dtos.WeatherUnit
 import com.github.muhwyndhamhp.ktorweather.models.DayCode
 import com.github.muhwyndhamhp.ktorweather.models.WeatherCode
-import com.github.muhwyndhamhp.ktorweather.modules.forecast.usecase.GetSevenDaysForecastUsecaseImpl
+import com.github.muhwyndhamhp.ktorweather.modules.forecast.ForecastRepositoryImpl
 import com.github.muhwyndhamhp.ktorweather.utils.CalendarProvider
 import com.github.muhwyndhamhp.ktorweather.utils.Constants.TIME_FORMAT
 import io.mockk.coEvery
