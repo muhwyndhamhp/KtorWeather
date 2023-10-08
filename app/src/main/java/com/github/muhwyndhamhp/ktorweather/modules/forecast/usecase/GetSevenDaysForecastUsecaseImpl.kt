@@ -42,17 +42,22 @@ class GetSevenDaysForecastUsecaseImpl(
                 val dailyIndexes = getDailyIndexes(times, data.currentWeather)
                 val todayWeather = Weather.extractFromIndexes(
                     todayIndexes,
-                    data.hourly
+                    data.hourly,
+                    data.hourlyUnits,
+                    true
                 )
                 val dailyWeather = Weather.extractFromIndexes(
                     dailyIndexes,
-                    data.hourly
+                    data.hourly,
+                    data.hourlyUnits,
+                    false
                 )
                 return Result.success(
                     DailyWeather(
                         currentWeather = Weather.fromDtoWeather(
                             data.currentWeather
-                                ?: return Result.failure(Exception("current weather not found"))
+                                ?: return Result.failure(Exception("current weather not found")),
+                            data.weatherUnit
                         ),
                         nextWeathers = dailyWeather,
                         todayWeathers = todayWeather

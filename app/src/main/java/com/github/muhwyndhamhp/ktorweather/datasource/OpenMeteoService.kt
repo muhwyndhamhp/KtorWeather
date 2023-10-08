@@ -10,7 +10,7 @@ interface OpenMeteoService {
         @Query("latitude") lat: Double,
         @Query("longitude") lng: Double,
         @Query("current_weather") currentWeather: Boolean = true,
-        @Query("hourly") paramsHourly: String = "temperature_2m,relativehumidity_2m,weathercode,windspeed_10m",
+        @Query("hourly") paramsHourly: String = "temperature_2m,relativehumidity_2m,weathercode,windspeed_10m,winddirection_10m",
         @Query("timezone") timeZone: String = "Asia/Bangkok"
     ): WeatherData?
 }
