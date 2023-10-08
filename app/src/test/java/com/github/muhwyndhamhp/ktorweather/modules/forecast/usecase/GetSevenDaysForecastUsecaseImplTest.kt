@@ -7,7 +7,7 @@ import com.github.muhwyndhamhp.ktorweather.dtos.WeatherHourlyUnits
 import com.github.muhwyndhamhp.ktorweather.dtos.WeatherUnit
 import com.github.muhwyndhamhp.ktorweather.models.DayCode
 import com.github.muhwyndhamhp.ktorweather.models.WeatherCode
-import com.github.muhwyndhamhp.ktorweather.modules.forecast.ForecastRepositoryImpl
+import com.github.muhwyndhamhp.ktorweather.modules.forecast.ForecastRepository
 import com.github.muhwyndhamhp.ktorweather.utils.CalendarProvider
 import com.github.muhwyndhamhp.ktorweather.utils.Constants.TIME_FORMAT
 import io.mockk.coEvery
@@ -28,7 +28,7 @@ import java.util.Locale
 class GetSevenDaysForecastUsecaseImplTest {
 
     @MockK
-    lateinit var repository: ForecastRepositoryImpl
+    lateinit var repository: ForecastRepository
 
     @MockK
     lateinit var calendarProvider: CalendarProvider
