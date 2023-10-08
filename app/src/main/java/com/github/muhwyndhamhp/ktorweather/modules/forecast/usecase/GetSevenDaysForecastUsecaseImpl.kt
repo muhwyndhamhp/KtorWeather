@@ -1,8 +1,9 @@
-package com.github.muhwyndhamhp.ktorweather.modules.forecast
+package com.github.muhwyndhamhp.ktorweather.modules.forecast.usecase
 
 import com.github.muhwyndhamhp.ktorweather.dtos.WeatherData
 import com.github.muhwyndhamhp.ktorweather.models.DailyWeather
 import com.github.muhwyndhamhp.ktorweather.models.Weather
+import com.github.muhwyndhamhp.ktorweather.modules.forecast.ForecastRepository
 import com.github.muhwyndhamhp.ktorweather.utils.CalendarProvider
 import com.github.muhwyndhamhp.ktorweather.utils.Constants.TIME_FORMAT
 import kotlinx.coroutines.flow.Flow
@@ -14,15 +15,11 @@ import java.util.Date
 import java.util.Locale
 import com.github.muhwyndhamhp.ktorweather.dtos.Weather as DtosWeather
 
-class ForecastUsecaseImpl(
+class GetSevenDaysForecastUsecaseImpl(
     private val repo: ForecastRepository,
     private val calendar: CalendarProvider
-) : ForecastUsecase, KoinComponent {
-
-    companion object {
-    }
-
-    override suspend fun getSevenDaysForecast(
+) : GetSevenDaysForecastUsecase, KoinComponent {
+    override suspend fun flows(
         lat: Double,
         lng: Double
     ): Flow<Result<DailyWeather>> {

@@ -7,6 +7,7 @@ import com.github.muhwyndhamhp.ktorweather.dtos.WeatherHourlyUnits
 import com.github.muhwyndhamhp.ktorweather.dtos.WeatherUnit
 import com.github.muhwyndhamhp.ktorweather.models.DayCode
 import com.github.muhwyndhamhp.ktorweather.models.WeatherCode
+import com.github.muhwyndhamhp.ktorweather.modules.forecast.usecase.GetSevenDaysForecastUsecaseImpl
 import com.github.muhwyndhamhp.ktorweather.utils.CalendarProvider
 import com.github.muhwyndhamhp.ktorweather.utils.Constants.TIME_FORMAT
 import io.mockk.coEvery
@@ -24,7 +25,7 @@ import java.util.Calendar
 import java.util.Locale
 
 @ExtendWith(MockKExtension::class)
-class ForecastUsecaseImplTest {
+class GetSevenDaysForecastUsecaseImplTest {
 
     @MockK
     lateinit var repository: ForecastRepositoryImpl
@@ -33,7 +34,7 @@ class ForecastUsecaseImplTest {
     lateinit var calendarProvider: CalendarProvider
 
     @InjectMockKs
-    lateinit var usecase: ForecastUsecaseImpl
+    lateinit var getSevenDaysForecastUsecase: GetSevenDaysForecastUsecaseImpl
 
     @Test
     fun `get current weather, today's hourly weather, and next 7 day's daily weather given valid weather data input`() {
@@ -49,7 +50,7 @@ class ForecastUsecaseImplTest {
         every { calendarProvider.getInstance() } returns cal
 
         runBlocking {
-            val result = usecase.getSevenDaysForecast(-7.5, 110.875).first()
+            val result = getSevenDaysForecastUsecase.flows(-7.5, 110.875).first()
             assert(result.isSuccess)
             assert(result.getOrNull() != null)
             result.getOrNull()?.let { dailyWeather ->
@@ -73,7 +74,7 @@ class ForecastUsecaseImplTest {
         every { calendarProvider.getInstance() } returns cal
 
         runBlocking {
-            val result = usecase.getSevenDaysForecast(-7.5, 110.875).first()
+            val result = getSevenDaysForecastUsecase.flows(-7.5, 110.875).first()
             assert(result.isFailure)
             assert(result.getOrNull() == null)
             assert(result.exceptionOrNull() != null)
