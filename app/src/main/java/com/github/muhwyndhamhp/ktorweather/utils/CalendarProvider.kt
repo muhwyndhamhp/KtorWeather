@@ -11,22 +11,24 @@ class CalendarProvider() : KoinComponent {
         return Calendar.getInstance()
     }
 
-    fun getDetailed(date: String) : String {
+    fun getDetailed(date: String): String {
         val cal = getCalendarFromDateString(date)
         val sdf = SimpleDateFormat("EEEE, dd MMM yyyy, HH:mm", Locale.getDefault())
         return sdf.format(cal.time)
     }
-    fun getShortDate(date: String) : String {
+
+    fun getShortDate(date: String): String {
         val cal = getCalendarFromDateString(date)
         val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
         return sdf.format(cal.time)
     }
 
-    fun getShortHour(date : String) : String {
+    fun getShortHour(date: String): String {
         val cal = getCalendarFromDateString(date)
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         return sdf.format(cal.time)
     }
+
     fun getCalendarFromDateString(date: String): Calendar {
         val cal = Calendar.getInstance()
         val sdf = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
