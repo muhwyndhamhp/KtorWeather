@@ -3,6 +3,8 @@ package com.github.muhwyndhamhp.ktorweather.modules.forecast
 import com.github.muhwyndhamhp.ktorweather.dtos.WeatherData
 import com.github.muhwyndhamhp.ktorweather.models.DailyWeather
 import com.github.muhwyndhamhp.ktorweather.models.Weather
+import com.github.muhwyndhamhp.ktorweather.utils.CalendarProvider
+import com.github.muhwyndhamhp.ktorweather.utils.Constants.TIME_FORMAT
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
@@ -12,15 +14,27 @@ import java.util.Date
 import java.util.Locale
 import com.github.muhwyndhamhp.ktorweather.dtos.Weather as DtosWeather
 
-class ForecastUsecaseImpl(private val repo: ForecastRepository) : ForecastUsecase, KoinComponent {
-    override suspend fun getSevenDaysForecast(lat: Double, lng: Double): Flow<Result<DailyWeather>> {
+class ForecastUsecaseImpl(
+    private val repo: ForecastRepository,
+    private val calendar: CalendarProvider
+) : ForecastUsecase, KoinComponent {
+
+    companion object {
+    }
+
+    override suspend fun getSevenDaysForecast(
+        lat: Double,
+        lng: Double
+    ): Flow<Result<DailyWeather>> {
         return repo.getLatestForecastData(lat, lng).map { result ->
             if (result.isSuccess) {
                 return@map extractDailyWeather(result)
             } else {
-                Result.failure<DailyWeather>(result.exceptionOrNull() ?: Exception("process not successful"))
+                Result.failure<DailyWeather>(
+                    result.exceptionOrNull() ?: Exception("No Data")
+                )
             }
-            Result.failure(Exception("result is null"))
+            Result.failure(Exception("No Data"))
         }
     }
 
@@ -53,7 +67,7 @@ class ForecastUsecaseImpl(private val repo: ForecastRepository) : ForecastUsecas
     }
 
     private fun getDailyIndexes(times: List<String?>, currentWeather: DtosWeather?): List<Int> {
-        val format = SimpleDateFormat("yyyy-MM-ddTHH:mm", Locale.ENGLISH)
+        val format = SimpleDateFormat(TIME_FORMAT, Locale.ENGLISH)
         val cal = Calendar.getInstance()
         cal.time = format.parse(currentWeather?.time ?: "") ?: cal.time
 
@@ -62,10 +76,10 @@ class ForecastUsecaseImpl(private val repo: ForecastRepository) : ForecastUsecas
 
         return times.mapIndexed { index: Int, time ->
             val wTime = Calendar.getInstance()
-            val dateFormat = SimpleDateFormat("yyyy-MM-ddTHH:mm", Locale.ENGLISH)
+            val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.ENGLISH)
             wTime.time = dateFormat.parse(time ?: "") ?: wTime.time
 
-            if (wTime.get(Calendar.HOUR) == cal.get(Calendar.HOUR)) {
+            if (wTime.get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY)) {
                 index
             } else {
                 null
@@ -82,7 +96,7 @@ class ForecastUsecaseImpl(private val repo: ForecastRepository) : ForecastUsecas
         // The "more efficient" way to do this is to stop iterating after the last index is found
         // because the data is ordered in ascending order.
         return it.mapIndexed { index, time ->
-            val format = SimpleDateFormat("yyyy-MM-ddTHH:mm", Locale.ENGLISH)
+            val format = SimpleDateFormat(TIME_FORMAT, Locale.ENGLISH)
             val dateTime = format.parse(time ?: "")
             if (dateTime?.after(startDay) == true && dateTime.before(nextDay)) {
                 index
@@ -93,7 +107,7 @@ class ForecastUsecaseImpl(private val repo: ForecastRepository) : ForecastUsecas
     }
 
     private fun getRelevantDates(): Pair<Date, Date> {
-        val cal = Calendar.getInstance()
+        val cal = calendar.getInstance()
         cal.set(Calendar.HOUR_OF_DAY, 0)
         cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0)

@@ -1,7 +1,5 @@
 package com.github.muhwyndhamhp.ktorweather.datasource
 
-import android.content.Context
-import androidx.room.Room
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
@@ -13,11 +11,6 @@ val dataSourceModule = module {
     factory { provideOpenMeteoService(get()) }
     single { provideOkHTTPClient() }
     single { provideRetrofit(get(), "https://api.open-meteo.com/".toHttpUrlOrNull()!!) }
-    single {
-        synchronized(this) {
-            provideKtorWeatherDB(get())
-        }
-    }
     single { provideOpenMeteoServicePipe(get()) }
 }
 
@@ -40,10 +33,3 @@ fun provideOkHTTPClient(): OkHttpClient {
 
 fun provideOpenMeteoService(retrofit: Retrofit): OpenMeteoService =
     retrofit.create(OpenMeteoService::class.java)
-
-fun provideKtorWeatherDB(applicationContext: Context): KtorWeatherDB =
-    Room.databaseBuilder(
-        applicationContext,
-        KtorWeatherDB::class.java,
-        "ktor_weather_db"
-    ).build()
