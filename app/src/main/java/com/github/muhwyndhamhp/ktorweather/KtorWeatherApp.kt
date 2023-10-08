@@ -5,6 +5,7 @@ import com.github.muhwyndhamhp.ktorweather.datasource.dataSourceModule
 import com.github.muhwyndhamhp.ktorweather.modules.forecast.forecastModule
 import com.github.muhwyndhamhp.ktorweather.ui.viewmodel.viewmodelModules
 import com.github.muhwyndhamhp.ktorweather.utils.utilsModule
+import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
@@ -13,6 +14,7 @@ class KtorWeatherApp : Application() {
         super.onCreate()
         startKoin {
             this.androidLogger()
+            androidContext(this@KtorWeatherApp)
             modules(
                 dataSourceModule,
                 forecastModule,

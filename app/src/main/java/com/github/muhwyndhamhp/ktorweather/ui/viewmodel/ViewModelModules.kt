@@ -5,5 +5,5 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewmodelModules = module {
-    viewModel { ForecastViewModel(Dispatchers.IO, get()) }
+    viewModel { ForecastViewModel(Dispatchers.IO, get(), get()) }
 }

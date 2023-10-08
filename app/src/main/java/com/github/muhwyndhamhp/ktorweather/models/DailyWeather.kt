@@ -4,6 +4,7 @@ data class DailyWeather(
     val currentWeather: Weather,
     val nextWeathers: List<Weather>,
     val todayWeathers: List<Weather>,
+    val fetchTime: Long,
 ) {
     companion object {
         fun getMockDailyWeather(): DailyWeather {
@@ -24,7 +25,8 @@ data class DailyWeather(
                     Weather.getMockData(),
                     Weather.getMockData(),
                     Weather.getMockData()
-                )
+                ),
+                fetchTime = System.currentTimeMillis()
             )
         }
     }

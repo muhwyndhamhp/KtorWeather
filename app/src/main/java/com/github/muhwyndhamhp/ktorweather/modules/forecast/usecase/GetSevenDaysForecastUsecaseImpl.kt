@@ -60,7 +60,8 @@ class GetSevenDaysForecastUsecaseImpl(
                             data.weatherUnit
                         ),
                         nextWeathers = dailyWeather,
-                        todayWeathers = todayWeather
+                        todayWeathers = todayWeather,
+                        fetchTime = System.currentTimeMillis()
                     )
                 )
             }
