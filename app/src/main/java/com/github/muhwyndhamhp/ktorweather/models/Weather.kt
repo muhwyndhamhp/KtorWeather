@@ -28,6 +28,17 @@ data class Weather(
             }
         }
 
+        fun getMockData(): Weather {
+            return Weather(
+                time = "2023-10-07T00:00",
+                temperature = 23.7f,
+                windSpeed = 8.0f,
+                windDirection = 198,
+                isDay = DayCode.Day,
+                weatherCode = WeatherCode.ClearSky
+            )
+        }
+
         fun fromDtoWeather(currentWeather: DtosWeather): Weather {
             return Weather(
                 time = currentWeather.time ?: "",

@@ -69,7 +69,7 @@ data class WeatherUnit(
     val windDirection: String?,
     @field:Json(name = "is_day")
     val isDay: String?,
-    @field:Json(name = "weather_code")
+    @field:Json(name = "weathercode")
     val weatherCode: String?,
 )
 
@@ -84,6 +84,6 @@ data class Weather(
     val windDirection: Int?,
     @field:Json(name = "is_day")
     val isDay: Int?,
-    @field:Json(name = "weather_code")
+    @field:Json(name = "weathercode")
     val weatherCode: Int?,
 )

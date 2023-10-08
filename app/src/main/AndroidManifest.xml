@@ -17,9 +17,8 @@
         android:theme="@style/Theme.KtorWeather"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.ForecastActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.KtorWeather">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

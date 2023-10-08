@@ -1,3 +1,31 @@
 <resources>
     <string name="app_name">KtorWeather</string>
+    <string name="loading_forecast_data">Loading forecast data…</string>
+    <string name="clear_sky">Clear Sky</string>
+    <string name="mainly_clear">Mainly Clear</string>
+    <string name="partly_cloudy">Partly Cloudy</string>
+    <string name="overcast">Overcast</string>
+    <string name="fog">Fog</string>
+    <string name="depositing_rime_fog">Depositing Rime Fog</string>
+    <string name="light_drizzle">Light Drizzle</string>
+    <string name="moderate_drizzle">Moderate Drizzle</string>
+    <string name="dense_drizzle">Dense Drizzle</string>
+    <string name="light_freezing_drizzle">Light Freezing Drizzle</string>
+    <string name="dense_freezing_drizzle">Dense Freezing Drizzle</string>
+    <string name="slightly_raining">Slightly Raining</string>
+    <string name="moderately_raining">Moderately Raining</string>
+    <string name="heavy_raining">Heavy Raining</string>
+    <string name="light_freezing_rain">Light Freezing Rain</string>
+    <string name="heavy_freezing_rain">Heavy Freezing Rain</string>
+    <string name="slight_snow_falling">Slight Snow Falling</string>
+    <string name="moderate_snow_falling">Moderate Snow Falling</string>
+    <string name="heavy_snow_falling">Heavy Snow Falling</string>
+    <string name="snow_grains">Snow Grains</string>
+    <string name="slight_rain_shower">Slight Rain Shower</string>
+    <string name="moderate_rain_shower">Moderate Rain Shower</string>
+    <string name="violent_rain_shower">Violent Rain Shower</string>
+    <string name="slight_snow_shower">Slight Snow Shower</string>
+    <string name="heavy_snow_shower">Heavy Snow Shower</string>
+    <string name="thunderstorm">Thunderstorm</string>
+    <string name="unknown">Unknown</string>
 </resources>
