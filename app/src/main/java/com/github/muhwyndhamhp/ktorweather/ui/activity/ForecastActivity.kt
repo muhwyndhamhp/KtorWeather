@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +30,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.github.muhwyndhamhp.ktorweather.models.DailyWeather
 import com.github.muhwyndhamhp.ktorweather.models.Weather
 import com.github.muhwyndhamhp.ktorweather.models.WeatherCode
@@ -51,6 +52,84 @@ class ForecastActivity : ComponentActivity() {
 }
 
 @Composable
+fun ForecastAct(viewModel: ForecastViewModel, orientation: Int) {
+    when (val state = viewModel.forecast.collectAsState().value) {
+        is ForecastState.Error -> Unit
+        is ForecastState.Loading -> ForecastLoading(message = state.loadingMessage)
+        is ForecastState.Success -> Forecast(state.dailyWeather, orientation)
+    }
+}
+
+@Composable
+fun ForecastLoading(@StringRes message: Int) {
+    
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize()
+            .padding(start = 60.dp, end = 60.dp, top = 30.dp),
+    ) {
+        LinearProgressIndicator(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            trackColor = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Text(
+            text = stringResource(id = message),
+            color = MaterialTheme.colorScheme.tertiary
+        )
+    }
+}
+
+@Composable
+fun Forecast(dailyWeather: DailyWeather, orientation: Int) {
+    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize()
+                .padding(start = 10.dp, end = 10.dp, top = 30.dp),
+        ) {
+            ForecastBody(dailyWeather = dailyWeather, orientation = orientation)
+        }
+    } else {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize()
+                .padding(start = 10.dp, bottom = 10.dp, top = 10.dp),
+        ) {
+            ForecastBody(dailyWeather = dailyWeather, orientation = orientation)
+        }
+    }
+}
+
+@Composable
+fun ForecastBody(dailyWeather: DailyWeather, orientation: Int) {
+    val shape = if (orientation == Configuration.ORIENTATION_PORTRAIT)
+        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+    else
+        RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
+
+    CurrentWeather(currentWeather = dailyWeather.currentWeather)
+    Column(
+        modifier = Modifier
+            .clip(shape = shape)
+            .background(MaterialTheme.colorScheme.surfaceDim)
+            .padding(top = 20.dp, start = 10.dp, end = 10.dp, bottom = 20.dp)
+    ) {
+        TodayWeather(todayWeather = dailyWeather.todayWeathers, true)
+        DailyWeather(dailyWeather = dailyWeather.nextWeathers, true)
+    }
+}
+
+@Composable
 fun CurrentWeather(currentWeather: Weather) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,22 +137,70 @@ fun CurrentWeather(currentWeather: Weather) {
     ) {
         Text(
             text = currentWeather.temperature,
-            fontSize = 50.sp,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier
                 .padding(horizontal = 30.dp, vertical = 10.dp),
-            color = MaterialTheme.colorScheme.tertiary,
         )
         Text(
             text = stringResource(id = currentWeather.weatherCode.message),
-            fontSize = 25.sp,
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier
                 .padding(15.dp),
-            color = MaterialTheme.colorScheme.tertiary,
         )
         Text(
             text = currentWeather.time,
             color = MaterialTheme.colorScheme.tertiary
         )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TodayWeather(todayWeather: List<Weather>, isPortrait: Boolean) {
+    val state = rememberLazyListState()
+    Column(
+        modifier = Modifier.padding(bottom = 20.dp)
+    ) {
+        Text(
+            text = "Today's Weathers",
+            color = MaterialTheme.colorScheme.tertiary,
+        )
+        LazyRow(
+            modifier = if (isPortrait) Modifier.fillMaxWidth() else Modifier,
+            state = state,
+            flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
+        ) {
+            items(todayWeather.size) { index ->
+                SnippetWeather(weather = todayWeather[index])
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DailyWeather(dailyWeather: List<Weather>, isPortrait: Boolean) {
+    val state = rememberLazyListState()
+    Column {
+        Text(
+            text = "Weather's for the Week",
+            color = MaterialTheme.colorScheme.tertiary,
+        )
+        LazyRow(
+            modifier = if (isPortrait) Modifier.fillMaxWidth() else Modifier.fillMaxHeight(),
+            state = state,
+            flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
+        ) {
+            items(dailyWeather.size) { index ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SnippetWeather(weather = dailyWeather[index])
+                }
+            }
+        }
     }
 }
 
@@ -106,115 +233,9 @@ fun SnippetWeather(weather: Weather) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun TodayWeather(todayWeather: List<Weather>, isPortrait: Boolean) {
-    val state = rememberLazyListState()
-    Column(
-        modifier = Modifier.padding(bottom = 20.dp)
-    ) {
-        Text(
-            text = "Today's Weathers",
-            color = MaterialTheme.colorScheme.tertiary,
-        )
-        LazyRow(
-            modifier = if (isPortrait) Modifier.fillMaxWidth() else Modifier,
-            state = state,
-            flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
-        ) {
-            items(todayWeather.size) { index ->
-                SnippetWeather(weather = todayWeather[index])
-            }
-        }
-    }
-}
-
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun DailyWeather(dailyWeather: List<Weather>, isPortrait: Boolean) {
-    val state = rememberLazyListState()
-    Column {
-        Text(
-            text = "Weather's for the Week",
-            color = MaterialTheme.colorScheme.tertiary,
-        )
-        LazyRow(
-            modifier = if (isPortrait) Modifier.fillMaxWidth() else Modifier.fillMaxHeight(),
-            state = state,
-            flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
-        ) {
-            items(dailyWeather.size) { index ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    SnippetWeather(weather = dailyWeather[index])
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ForecastAct(viewModel: ForecastViewModel, orientation: Int) {
-    when (val state = viewModel.forecast.collectAsState().value) {
-        is ForecastState.Error -> Unit
-        is ForecastState.Loading -> Unit
-        is ForecastState.Success -> {
-            Forecast(state.dailyWeather, orientation)
-        }
-    }
-}
-
-@Composable
-fun Forecast(dailyWeather: DailyWeather, orientation: Int) {
-    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize()
-                .padding(start = 10.dp, end = 10.dp, top = 30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            CurrentWeather(currentWeather = dailyWeather.currentWeather)
-            Column(
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                    .background(MaterialTheme.colorScheme.surfaceDim)
-                    .padding(top = 20.dp, start = 10.dp, end = 10.dp, bottom = 20.dp)
-            ) {
-                TodayWeather(todayWeather = dailyWeather.todayWeathers, true)
-                DailyWeather(dailyWeather = dailyWeather.nextWeathers, true)
-            }
-        }
-    } else {
-        Row(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize()
-                .padding(start = 10.dp, bottom = 10.dp, top = 10.dp),
-
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            CurrentWeather(currentWeather = dailyWeather.currentWeather)
-            Column(
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
-                    .background(MaterialTheme.colorScheme.surfaceDim)
-                    .padding(top = 20.dp, start = 10.dp, end = 10.dp, bottom = 20.dp)
-            ) {
-                TodayWeather(todayWeather = dailyWeather.todayWeathers, false)
-                DailyWeather(dailyWeather = dailyWeather.nextWeathers, false)
-            }
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun ForecastPreview() {
     KtorWeatherTheme {
         Forecast(dailyWeather = mockDailyWeather, Configuration.ORIENTATION_PORTRAIT)
     }
